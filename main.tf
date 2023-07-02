@@ -2,7 +2,6 @@ terraform {
   required_version = ">= 1.0.0"
   backend "gcs" {
     bucket = "justanotherspy-terraform-state"
-    prefix = "dev"
   }
 }
 provider "null" {}
