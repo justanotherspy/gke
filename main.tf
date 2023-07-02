@@ -7,13 +7,13 @@ terraform {
 
 provider "google" {
   project = "terraform-391612"
-  region  = "eu-west1"
+  region  = "europe-west1"
 }
 
 resource "google_compute_subnetwork" "default" {
   name          = "gke-subnetwork"
   ip_cidr_range = "10.2.0.0/16"
-  region        = "eu-west1"
+  region        = "europe-west1"
   network       = google_compute_network.default.id
   secondary_ip_range {
     range_name    = "services-range"
@@ -38,7 +38,7 @@ resource "google_service_account" "default" {
 
 resource "google_container_cluster" "primary" {
   name                     = "gke-cluster"
-  location                 = "eu-west1"
+  location                 = "europe-west1"
   remove_default_node_pool = true
   initial_node_count       = 1
 
@@ -55,7 +55,7 @@ resource "google_container_cluster" "primary" {
 
 resource "google_container_node_pool" "primary_preemptible_nodes" {
   name       = "gke-node-pool"
-  location   = "eu-west1"
+  location   = "europe-west1"
   cluster    = google_container_cluster.primary.name
   node_count = 1
 
