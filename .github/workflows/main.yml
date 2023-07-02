@@ -8,10 +8,20 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: 'projects/873779737071/locations/global/workloadIdentityPools/actions-pool/*'
+          service_account: 'terraform@terraform-391612.iam.gserviceaccount.com'
+          
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
