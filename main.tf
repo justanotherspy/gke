@@ -50,6 +50,12 @@ resource "google_container_cluster" "primary" {
     services_secondary_range_name = google_compute_subnetwork.default.secondary_ip_range.0.range_name
   }
 
+  master_authorized_networks_config {
+    cidr_blocks {
+      cidr_block = "209.203.45.252/32"
+    }
+  }
+
 }
 
 
@@ -62,6 +68,18 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
   node_config {
     preemptible  = true
     machine_type = "e2-medium"
+    workload_metadata_config {
+      node_metadata = "GKE_METADATA_SERVER"
+    }
+
+    shielded_instance_config {
+      enable_secure_boot          = true
+      enable_integrity_monitoring = true
+    }
+
+    metadata = {
+      "disable-legacy-endpoints" = "true"
+    }
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     service_account = google_service_account.default.email
