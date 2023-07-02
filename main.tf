@@ -69,7 +69,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     preemptible  = true
     machine_type = "e2-medium"
     workload_metadata_config {
-      node_metadata = "GKE_METADATA_SERVER"
+      mode = "GKE_METADATA_SERVER"
     }
 
     shielded_instance_config {
