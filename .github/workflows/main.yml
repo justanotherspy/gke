@@ -33,8 +33,10 @@ jobs:
         run: terraform init -input=false
       
       - name: Terraform Branch Workspace
-        if: github.ref != 'refs/heads/main'
-        run: terraform workspace new ${{ github.head_ref }}
+        if: github.ref != 'refs/heads/main' && github.event_name == 'pull_request'
+        run: terraform workspace new $GITHUB_HEAD_REF
+        env:
+          GITHUB_HEAD_REF: ${{ github.head_ref }}
       
       - name: Terraform Main Workspace
         if: github.ref == 'refs/heads/main'
@@ -57,4 +59,6 @@ jobs:
         run: |
           terraform destroy -input=false -auto-approve -var-file=terraform.tfvars || exit 1
           terraform workspace select default
-          terraform workspace delete ${{ github.head_ref }}
+          terraform workspace delete $GITHUB_HEAD_REF
+        env:
+          GITHUB_HEAD_REF: ${{ github.head_ref }}
