@@ -32,6 +32,14 @@ jobs:
       - name: Terraform Init
         run: terraform init -input=false
       
+      - name: Terraform Branch Workspace
+        if: github.ref != 'refs/heads/main'
+        run: terraform workspace new ${{ github.ref }}
+      
+      - name: Terraform Main Workspace
+        if: github.ref == 'refs/heads/main'
+        run: terraform workspace select main
+      
       - name: Terraform Format
         run: terraform fmt -check -recursive -diff
 
@@ -42,6 +50,12 @@ jobs:
         run: terraform plan -input=false -out=tfplan -var-file=terraform.tfvars
       
       - name: Terraform Apply
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: terraform apply -input=false -auto-approve tfplan
-      
+        
+      - name: Terraform Cleanup
+        if: github.event_name == 'pull_request'
+        run: |
+          terraform destroy -input=false -auto-approve -var-file=terraform.tfvars 
+          terraform workspace select default
+          terraform workspace delete ${{ github.ref }}
+
