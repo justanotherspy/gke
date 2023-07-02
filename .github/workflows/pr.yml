@@ -1,12 +1,12 @@
 name: main-terraform
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
 jobs:
-  terraform-main:
+  terraform-pr:
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
@@ -29,8 +29,10 @@ jobs:
       - name: Terraform Init
         run: terraform init -input=false
       
-      - name: Terraform Main Workspace
-        run: terraform workspace select main
+      - name: Terraform Branch Workspace
+        run: terraform workspace new $GITHUB_HEAD_REF
+        env:
+          GITHUB_HEAD_REF: ${{ github.head_ref }}
       
       - name: Terraform Format
         run: terraform fmt -check -recursive -diff
@@ -44,3 +46,10 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -input=false -auto-approve tfplan
         
+      - name: Terraform Cleanup
+        run: |
+          terraform destroy -input=false -auto-approve -var-file=terraform.tfvars || exit 1
+          terraform workspace select default
+          terraform workspace delete $GITHUB_HEAD_REF
+        env:
+          GITHUB_HEAD_REF: ${{ github.head_ref }}
