@@ -9,6 +9,11 @@ provider "null" {}
 
 resource "null_resource" "null_resource" {
   provisioner "local-exec" {
-    command = "echo hello"
+    command = "echo ${var.my_var}"
   }
+}
+
+variable "my_var" {
+  type    = string
+  default = "Hello World!"
 }

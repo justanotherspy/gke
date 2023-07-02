@@ -1,12 +1,15 @@
-name: Terraform Validation
+name: main-terraform
 
 on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
 
 jobs:
-  validate:
+  terraform:
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
@@ -33,5 +36,12 @@ jobs:
         run: terraform fmt -check -recursive -diff
 
       - name: Terraform Validate
-        run: terraform validate -input=false
+        run: terraform validate
+      
+      - name: Terraform Plan
+        run: terraform plan -input=false -out=tfplan -var-file=terraform.tfvars
+      
+      - name: Terraform Apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform apply -input=false -auto-approve tfplan
       
