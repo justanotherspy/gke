@@ -20,9 +20,9 @@ jobs:
         uses: google-github-actions/auth@v1
         with:
           create_credentials_file: true
-          workload_identity_provider: 'projects/873779737071/locations/global/workloadIdentityPools/actions-pool/*'
+          workload_identity_provider: 'projects/873779737071/locations/global/workloadIdentityPools/actions-pool/providers/actions-provider'
           service_account: 'terraform@terraform-391612.iam.gserviceaccount.com'
-          audience: "//iam.googleapis.com/projects/terraform-391612/locations/global/workloadIdentityPools/actions-pool/providers/actions-provider"
+          #audience: "//iam.googleapis.com/projects/terraform-391612/locations/global/workloadIdentityPools/actions-pool/providers/actions-provider"
           
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
