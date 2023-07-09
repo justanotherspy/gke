@@ -10,6 +10,10 @@ provider "google" {
   region  = "europe-west1"
 }
 
+data "google_project" "project" {
+  project_id = "terraform-391612"
+}
+
 resource "google_compute_subnetwork" "default" {
   name          = "gke-subnetwork"
   ip_cidr_range = "10.2.0.0/16"
@@ -44,6 +48,10 @@ resource "google_container_cluster" "primary" {
 
   network    = google_compute_network.default.id
   subnetwork = google_compute_subnetwork.default.id
+
+  workload_identity_config {
+    workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
+  }
 
   ip_allocation_policy {
     cluster_secondary_range_name  = "pod-ranges"
